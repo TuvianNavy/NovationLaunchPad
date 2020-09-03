@@ -91,6 +91,13 @@ device='hw:1,0,1'
 if [ x$1 = xinit ]; then
   amidi -p ${device} -S "$SysEx_Pgm_Mode"
   exit 0
+elif [ x$1 = xclear ]; then
+  for i in 0 1 2 3 4 5 6 7; do
+    for j in 0 1 2 3 4 5 6 7; do
+      $0 $i $j
+    done
+  done
+  exit 0
 fi
 
 if [ x$1 = x ]; then
