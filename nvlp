@@ -1,0 +1,130 @@
+#!/bin/sh
+# cf. "Launchpad Mini [MK3] Programmer’s reference manual"
+# usage: $0 xpos ypos color
+
+SysEx_Pgm_Mode='F0 00 20 29 02 0D 0E 01 F7'
+SysEx_Turn_On='F0 00 20 29 02 0D 09 01 F7'
+SysEx_Turn_Off='F0 00 20 29 02 0D 09 00 F7'
+
+# definitions for note_x_y (note_0_0 is upmost leftmost)
+note_0_7='0B'
+note_1_7='0C'
+note_2_7='0D'
+note_3_7='0E'
+note_4_7='0F'
+note_5_7='10'
+note_6_7='11'
+note_7_7='12'
+
+note_0_6='15'
+note_1_6='16'
+note_2_6='17'
+note_3_6='18'
+note_4_6='19'
+note_5_6='1A'
+note_6_6='1B'
+note_7_6='1C'
+
+note_0_5='1F'
+note_1_5='20'
+note_2_5='21'
+note_3_5='22'
+note_4_5='23'
+note_5_5='24'
+note_6_5='25'
+note_7_5='26'
+
+note_0_4='29'
+note_1_4='2A'
+note_2_4='2B'
+note_3_4='2C'
+note_4_4='2D'
+note_5_4='2E'
+note_6_4='2F'
+note_7_4='30'
+
+note_0_3='33'
+note_1_3='34'
+note_2_3='35'
+note_3_3='36'
+note_4_3='37'
+note_5_3='38'
+note_6_3='39'
+note_7_3='3A'
+
+note_0_2='3D'
+note_1_2='3E'
+note_2_2='3F'
+note_3_2='40'
+note_4_2='41'
+note_5_2='42'
+note_6_2='43'
+note_7_2='44'
+
+note_0_1='47'
+note_1_1='48'
+note_2_1='49'
+note_3_1='4A'
+note_4_1='4B'
+note_5_1='4C'
+note_6_1='4D'
+note_7_1='4E'
+
+note_0_0='51'
+note_1_0='52'
+note_2_0='53'
+note_3_0='54'
+note_4_0='55'
+note_5_0='56'
+note_6_0='57'
+note_7_0='58'
+
+# definitions for attributes (default is 90h)
+attrib_static='90'
+attrib_flash='91'
+attrib_pulse='92'
+
+# definitions for colors
+
+#device=$(amidi -l | grep Launchpad | head -1 | awk '{print $2}')
+device='hw:1,0,1'
+if [ x$1 = xinit ]; then
+  amidi -p ${device} -S "$SysEx_Pgm_Mode"
+  exit 0
+fi
+
+if [ x$1 = x ]; then
+  exit 1
+elif [ $1 -lt 0 ]; then
+  xpos=0
+elif [ $1 -ge 8 ]; then
+  xpos=7
+else
+  xpos=$(printf '%1d' $1)
+fi
+shift
+
+if [ x$1 = x ]; then
+  exit 1
+elif [ $1 -lt 0 ]; then
+  ypos=0
+elif [ $1 -ge 8 ]; then
+  ypos=7
+else
+  ypos=$(printf '%1d' $1)
+fi
+shift
+
+if [ x$1 = x ]; then
+  color=0
+elif [ $1 -lt 0 ]; then
+  color=0
+elif [ $1 -ge 128 ]; then
+  color=7f
+else
+  color=$(printf '%02x' $(expr $1))
+fi
+
+attrib=${attrib_static}
+eval note=\$"note_${xpos}_${ypos}"
+amidi -p ${device} -S "${attrib}"' '"${note}"' '"${color}"
