@@ -2,9 +2,9 @@
 # cf. "Launchpad Mini [MK3] Programmer’s reference manual"
 # usage: $0 xpos ypos color
 
-SysEx_Pgm_Mode='F0 00 20 29 02 0D 0E 01 F7'
-SysEx_Turn_On='F0 00 20 29 02 0D 09 01 F7'
-SysEx_Turn_Off='F0 00 20 29 02 0D 09 00 F7'
+SysEx_Init='F0 00 20 29 02 0D 0E 01 F7'
+SysEx_Show='F0 00 20 29 02 0D 09 01 F7'
+SysEx_Hide='F0 00 20 29 02 0D 09 00 F7'
 
 # definitions for note_x_y (note_0_0 is upmost leftmost)
 note_0_7='0B'
@@ -89,7 +89,13 @@ attrib_pulse='92'
 device=$(amidi -l | grep Launchpad | sed -n 2p | awk '{print $2}')
 #device='hw:1,0,1'
 if [ x$1 = xinit ]; then
-  amidi -p ${device} -S "$SysEx_Pgm_Mode"
+  amidi -p ${device} -S "$SysEx_Init"
+  exit 0
+elif [ x$1 = xshow ]; then
+  amidi -p ${device} -S "$SysEx_Show"
+  exit 0
+elif [ x$1 = xhide ]; then
+  amidi -p ${device} -S "$SysEx_Hide"
   exit 0
 elif [ x$1 = xclear ]; then
   for i in 0 1 2 3 4 5 6 7; do
