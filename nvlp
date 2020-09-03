@@ -86,8 +86,8 @@ attrib_pulse='92'
 
 # definitions for colors
 
-#device=$(amidi -l | grep Launchpad | head -1 | awk '{print $2}')
-device='hw:1,0,1'
+device=$(amidi -l | grep Launchpad | sed -n 2p | awk '{print $2}')
+#device='hw:1,0,1'
 if [ x$1 = xinit ]; then
   amidi -p ${device} -S "$SysEx_Pgm_Mode"
   exit 0
